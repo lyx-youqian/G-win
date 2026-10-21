@@ -1,0 +1,658 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>淄博市 2021—2025 年旅游业发展数据可视化分析</title>
+<style>
+:root{--bg:#0d1117;--panel:#161b22;--line:#21262d;--zb:#ff7a45;--zb2:#ffb27a;--ts:#3ec6a8;--ts2:#8de8d2;--gold:#f0c46c;--txt:#e6edf3;--sub:#8b949e}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--txt);font-family:"PingFang SC","Microsoft YaHei","Noto Sans CJK SC",sans-serif;overflow-x:hidden}
+nav{position:fixed;top:0;left:0;right:0;z-index:99;display:flex;align-items:center;justify-content:space-between;padding:14px 4vw;background:rgba(13,17,23,.85);backdrop-filter:blur(14px);border-bottom:1px solid var(--line)}
+.logo{font-size:20px;font-weight:800;letter-spacing:2px}
+.logo em{font-style:normal;background:linear-gradient(90deg,var(--zb),var(--gold),var(--ts));-webkit-background-clip:text;background-clip:text;color:transparent}
+nav a{color:var(--sub);text-decoration:none;margin-left:24px;font-size:14px;transition:.25s}
+nav a:hover{color:var(--gold)}
+header{min-height:100vh;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;position:relative;padding:0 6vw;
+ background:radial-gradient(ellipse 60% 45% at 20% 30%,rgba(255,122,69,.14),transparent 60%),radial-gradient(ellipse 55% 40% at 80% 65%,rgba(62,198,168,.12),transparent 60%),var(--bg)}
+.hero-tag{display:inline-block;border:1px solid var(--gold);color:var(--gold);border-radius:999px;padding:6px 18px;font-size:13px;letter-spacing:3px;margin-bottom:28px}
+h1{font-size:clamp(34px,6vw,76px);font-weight:900;line-height:1.18;letter-spacing:4px}
+h1 .g{background:linear-gradient(90deg,var(--zb) 10%,var(--gold) 50%,var(--ts) 90%);-webkit-background-clip:text;background-clip:text;color:transparent}
+.hero-sub{margin-top:22px;color:var(--sub);font-size:clamp(14px,1.4vw,17px);letter-spacing:1px;max-width:780px;line-height:1.95}
+.kpis{display:flex;gap:16px;flex-wrap:wrap;justify-content:center;margin-top:48px}
+.kpi{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:18px 28px;min-width:160px;transition:.35s}
+.kpi:hover{transform:translateY(-6px);border-color:var(--gold)}
+.kpi b{font-size:28px;display:block}.kpi span{font-size:12.5px;color:var(--sub)}
+.kpi.o b{color:var(--zb)}.kpi.t b{color:var(--ts)}.kpi.g b{color:var(--gold)}
+.scroll-hint{position:absolute;bottom:28px;left:50%;transform:translateX(-50%);color:var(--sub);font-size:12px;letter-spacing:4px;animation:float 2.2s ease-in-out infinite}
+@keyframes float{0%,100%{transform:translate(-50%,0)}50%{transform:translate(-50%,10px)}}
+section{padding:90px 6vw;max-width:1300px;margin:0 auto}
+.sec-head{margin-bottom:40px}
+.sec-num{font-size:13px;color:var(--gold);letter-spacing:5px;margin-bottom:10px}
+h2{font-size:clamp(24px,3.2vw,40px);font-weight:800;letter-spacing:2px}
+.sec-desc{color:var(--sub);margin-top:14px;max-width:860px;line-height:1.95;font-size:15px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:26px}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:26px}
+@media(max-width:900px){.grid2,.grid3{grid-template-columns:1fr}}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:24px;transition:.4s;opacity:0;transform:translateY(36px)}
+.card.show{opacity:1;transform:none}
+.card:hover{transform:translateY(-5px);border-color:#30363d;box-shadow:0 14px 40px rgba(0,0,0,.35)}
+.card h3{font-size:17px;margin-bottom:6px;letter-spacing:1px}
+.card .note{font-size:12px;color:var(--sub);margin-bottom:12px}
+svg.chart{width:100%;height:auto;display:block}
+svg.chart text{font-family:inherit}
+.tip{font-size:13px;color:var(--sub);line-height:2}
+.persona{display:flex;align-items:center;gap:18px;margin-bottom:12px}
+.avatar{width:60px;height:60px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0}
+.p1 .avatar{background:linear-gradient(135deg,#ff7a45,#c2410c)}
+.p2 .avatar{background:linear-gradient(135deg,#3ec6a8,#0f766e)}
+.p3 .avatar{background:linear-gradient(135deg,#f0c46c,#a16207)}
+.bar-row{margin:10px 0}
+.bar-row .lbl{display:flex;justify-content:space-between;font-size:13px;color:var(--sub);margin-bottom:5px}
+.track{height:8px;background:#21262d;border-radius:99px;overflow:hidden}
+.fill{height:100%;border-radius:99px;width:0;transition:width 1.4s cubic-bezier(.22,1,.36,1)}
+/* 地图 */
+.map-dist{transition:fill .3s,filter .3s;cursor:pointer;stroke:#0d1117;stroke-width:2}
+.map-dist:hover{filter:brightness(1.35)}
+.flow{fill:none;stroke-width:2;opacity:.55;stroke-dasharray:6 10;animation:flowmove 1.2s linear infinite}
+@keyframes flowmove{to{stroke-dashoffset:-16}}
+.pulse{transform-box:fill-box;transform-origin:center;animation:pulse 2s ease-in-out infinite}
+@keyframes pulse{0%,100%{opacity:1;r:5}50%{opacity:.25;r:11}}
+.terr-legend{position:absolute;right:16px;top:16px;background:rgba(13,17,23,.85);border:1px solid var(--line);border-radius:10px;padding:10px 14px;font-size:12px;color:var(--sub);line-height:2}
+.terr-legend i{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:6px;vertical-align:-1px}
+#tooltip{position:fixed;z-index:200;pointer-events:none;background:rgba(13,17,23,.95);border:1px solid #30363d;border-radius:10px;padding:10px 14px;font-size:13px;line-height:1.8;display:none;box-shadow:0 8px 24px rgba(0,0,0,.5);max-width:260px}
+#tooltip b{color:var(--gold)}
+footer{border-top:1px solid var(--line);padding:44px 6vw;text-align:center;color:var(--sub);font-size:13px;line-height:2}
+footer b{color:var(--gold)}
+
+/* ===== 多页面路由 ===== */
+.page{display:none}
+.page.active{display:block;animation:pageIn .55s cubic-bezier(.22,1,.36,1)}
+@keyframes pageIn{from{opacity:0;transform:translateY(26px)}to{opacity:1;transform:none}}
+.nav-links a.nav-on{color:var(--gold)!important;border-bottom:2px solid var(--gold);padding-bottom:2px}
+.pdots{position:fixed;left:20px;top:50%;transform:translateY(-50%);z-index:98;display:flex;flex-direction:column;gap:14px}
+.pdots a{width:9px;height:9px;border-radius:50%;background:#30363d;display:block;transition:.3s;position:relative}
+.pdots a:hover{background:var(--sub)}
+.pdots a.on{background:var(--gold);transform:scale(1.5)}
+.pdots a span{position:absolute;left:20px;top:-4px;font-size:12px;color:var(--sub);white-space:nowrap;opacity:0;transition:.25s;pointer-events:none}
+.pdots a:hover span{opacity:1}
+.pager{position:fixed;right:22px;bottom:22px;z-index:98;display:flex;gap:10px}
+.pager button{background:#161b22;border:1px solid #30363d;color:#e6edf3;border-radius:10px;padding:10px 18px;font-size:13px;cursor:pointer;transition:.25s;font-family:inherit}
+.pager button:hover{border-color:var(--gold);color:var(--gold)}
+@media(max-width:900px){.pdots{display:none}}
+</style>
+</head>
+<body>
+<div id="tooltip"></div>
+
+<nav>
+  <div class="logo">淄博文旅 <em>DATA</em></div>
+  <div class="nav-links"><a href="#/home" data-pg="home">首页</a><a href="#/map" data-pg="map">热力地图</a><a href="#/compare" data-pg="compare">双城对比</a><a href="#/sentiment" data-pg="sentiment">舆情情感</a><a href="#/persona" data-pg="persona">客群画像</a><a href="#/forecast" data-pg="forecast">趋势预测</a></div>
+</nav>
+
+<div class="page active" id="pg-home"><header>
+  <span class="hero-tag">全国大学生数字媒体科技作品及创意竞赛 · 数据可视化类</span>
+  <h1>淄博市 <span class="g">2021—2025</span> 年<br>旅游业发展数据可视化分析</h1>
+  <p class="hero-sub">以 2021—2025 年淄博市官方统计公报数据为基础，融合社交媒体舆情情感分析、地理热力地图与一元线性回归预测，解构"网红城市"流量密码，并与天水等同类网红城市横向对照，探索从"流量"到"留量"的文旅高质量发展路径。</p>
+  <div class="kpis">
+    <div class="kpi o"><b data-count="7587" data-suffix="万">0</b><span>2025 淄博接待游客（人次）</span></div>
+    <div class="kpi t"><b data-count="6543" data-suffix="万">0</b><span>2025 天水接待游客（人次）</span></div>
+    <div class="kpi o"><b data-count="768.6" data-decimal="1" data-suffix="亿">0</b><span>2025 淄博旅游总收入</span></div>
+    <div class="kpi t"><b data-count="440.5" data-decimal="1" data-suffix="亿">0</b><span>2025 天水旅游总收入</span></div>
+    <div class="kpi g"><b data-count="1.50" data-decimal="2" data-suffix="×">0</b><span>人均消费差距（1013 vs 673 元）</span></div>
+  </div>
+  <a class="scroll-hint" href="#/map" style="text-decoration:none">开始探索 ▾</a>
+</header></div>
+
+<!-- 00 淄博热力地图 -->
+<div class="page" id="pg-map"><section id="s0">
+  <div class="sec-head">
+    <div class="sec-num">00 / HEAT MAP · 新增</div>
+    <h2>淄博各区县文旅热度地图 & 客流来源</h2>
+    <p class="sec-desc">基于 2023—2025 年各区县文旅局公开数据、A级景区分布与 POI 密度的综合热度评估（示意模型）。
+    张店区作为烧烤核心消费地与交通枢纽承接最高热度；临淄（齐文化）、淄川（聊斋城·潭溪山）、博山（陶琉·红叶柿岩）构成第二梯队；
+    客流以省内自驾为主，济南、青岛、潍坊为前三大客源地。悬停查看详情，流动线条为客流来向动画。</p>
+  </div>
+  <div class="grid2">
+    <div class="card" style="grid-row:span 2">
+      <h3>淄博市各区县文旅热度分布</h3>
+      <div class="note">综合热度指数（0—100）· 颜色越暖热度越高 · 悬停查看 · 边界为示意画法</div>
+      <svg id="zbmap" class="chart" viewBox="0 0 1000 720"></svg>
+    </div>
+    <div class="card">
+      <h3>客源地 TOP8（省内为主 · 示意）</h3>
+      <div class="note">按游客来源占比排序 · 动画条形图</div>
+      <svg id="srcbar" class="chart" viewBox="0 0 800 360"></svg>
+    </div>
+    <div class="card">
+      <h3>📍 解读</h3>
+      <div class="note">热度 ≠ 收入：核心区的溢出效应</div>
+      <p class="tip">① 张店区以 7 处烧烤聚集街区 + 交通枢纽地位承接约 38% 客流，但人均停留仅 5.2 小时；<br>
+      ② 热度向南部山区（淄川、博山）外溢明显，潭溪山、红叶柿岩承接了 24% 的"烧烤+山水"联游客流；<br>
+      ③ 高青、沂源热度偏低但生态资源优，是下一步"康养避暑"产品化的潜力区——呼应地形图板块的低海拔→高海拔梯度开发逻辑。</p>
+    </div>
+  </div>
+</section></div>
+
+<!-- 01 双城对比 -->
+<div class="page" id="pg-compare"><section id="s1">
+  <div class="sec-head">
+    <div class="sec-num">01 / CITY COMPARISON</div>
+    <h2>双城文旅核心指标对比</h2>
+    <p class="sec-desc">"四链一镜"分析框架：热度链——火怎么来、怎么退；客流链——人有没有留下来；变现链——钱来了没有、质量如何；供给链——城市接得住吗；一面镜子——同样因美食走红、爆火更晚回落更快的天水。本页 5 张图各讲一个结论，数据出自两市统计公报、文旅局后评估报告与百度指数。</p>
+  </div>
+  <div class="grid2">
+    <div class="card"><h3>背离折线图 · 热度降，客流升</h3><div class="note">左轴：淄博游客人次（万人次）· 右轴："淄博烧烤"百度搜索指数（锚点 2023 峰值 4127、2025 年 362 已核验，基期数值为示意补全）· 剪刀差一眼可见</div><svg id="n1" class="chart"></svg></div>
+    <div class="card"><h3>双轴组合图 · 收入与人均</h3><div class="note">柱（左轴）：淄博旅游总收入（亿元）· 线（右轴）：双城人均消费（元）· 人多了，钱有没有多花？</div><svg id="n2" class="chart"></svg></div>
+    <div class="card"><h3>斜率图 · 指数化对照（2021=100）</h3><div class="note">实线=游客人次 · 虚线=人均消费：淄博"量增质减"，天水"量质齐升"</div><svg id="n3" class="chart"></svg></div>
+    <div class="card"><h3>柱线组合图 · 供给扩容</h3><div class="note">柱：A级景区（处）· 线：旅行社（家）· 2025 年旅行社数据未公布，如实断开不插值</div><svg id="n4" class="chart"></svg></div>
+  </div>
+  <div class="card" style="margin-top:26px"><h3>雷达图 · 双城"流量承接力"三维度对照</h3><div class="note">客流承接 / 消费提质 / 热度留存 · 各维度以较优城市=100 归一化 · 悬停查看原始数值</div><svg id="n5" class="chart"></svg></div>
+</section></div>
+
+<!-- 02 舆情情感 -->
+<div class="page" id="pg-sentiment"><section id="s2">
+  <div class="sec-head">
+    <div class="sec-num">02 / SENTIMENT ANALYSIS</div>
+    <h2>社交媒体评论情感倾向分析</h2>
+    <p class="sec-desc">对微博、小红书两平台"淄博烧烤""天水麻辣烫"相关笔记与评论进行情感倾向打标（正面 / 中性 / 负面）。整体来看两城口碑均以正面为主，小红书正面率更高（种草属性），微博负面声音相对集中于"排队久、涨价、体验不及预期"等话题。</p>
+  </div>
+  <div class="grid2">
+    <div class="card"><h3>微博评论情感分布</h3><div class="note">抽样示例数据 · n≈3200 条 · 环形图扫入动画</div><svg id="p1" class="chart"></svg></div>
+    <div class="card"><h3>小红书评论情感分布</h3><div class="note">抽样示例数据 · n≈2600 条</div><svg id="p2" class="chart"></svg></div>
+  </div>
+  <div class="grid3" style="margin-top:26px">
+    <div class="card"><h3>🔥 高频正面词</h3><div class="note">性价比、烟火气、热情好客、仪式感、本地人实在</div>
+      <p class="tip">"小饼小葱加蘸酱"的参与式吃法与天水"一元一串"的极致性价比，构成两城最核心的口碑资产。</p></div>
+    <div class="card"><h3>⚠️ 高频负面词</h3><div class="note">排队久、住宿涨价、停车难、同质化、宰客</div>
+      <p class="tip">流量峰值期服务承载力不足是共同痛点；"同质化跟风"负面词在 2024 年后显著上升，提示网红业态生命周期风险。</p></div>
+    <div class="card"><h3>💡 启示</h3><div class="note">舆情 → 产品迭代闭环</div>
+      <p class="tip">以舆情情感监测驱动产品迭代：延长消费链（夜间经济、二消场景）是化解"排队久却花钱少"矛盾的关键。</p></div>
+  </div>
+</section></div>
+
+<!-- 03 客群画像 -->
+<div class="page" id="pg-persona"><section id="s3">
+  <div class="sec-head">
+    <div class="sec-num">03 / USER PERSONA</div>
+    <h2>客群画像与消费结构诊断</h2>
+    <p class="sec-desc">出圈后两城客群结构发生显著变化：大学生"特种兵式旅游"与周边 300 公里内的家庭短途自驾占比快速抬升。该类客群对价格高度敏感、停留时间短、以"打卡"为目的，直接摊薄了人均消费——这解释了天水人均消费五年仅上升 16%（579→673 元）、增速显著低于人次增速的结构原因。</p>
+  </div>
+  <div class="grid2">
+    <div class="card">
+      <div class="persona p1"><div class="avatar">🎓</div><div><h3>大学生"特种兵"客群 · 约 42%</h3><div class="note">预算 200 元以内/天 · 高铁+步行 · 社交传播意愿极强</div></div></div>
+      <div class="bar-row"><div class="lbl"><span>价格敏感度</span><span>95%</span></div><div class="track"><div class="fill" data-w="95" style="background:var(--zb)"></div></div></div>
+      <div class="bar-row"><div class="lbl"><span>社交分享意愿</span><span>92%</span></div><div class="track"><div class="fill" data-w="92" style="background:var(--zb2)"></div></div></div>
+      <div class="bar-row"><div class="lbl"><span>停留时长 ≥2天</span><span>18%</span></div><div class="track"><div class="fill" data-w="18" style="background:#444c56"></div></div></div>
+    </div>
+    <div class="card">
+      <div class="persona p2"><div class="avatar">🚗</div><div><h3>家庭周边自驾游群 · 约 33%</h3><div class="note">半径 300km · 亲子向 · 周末两天一晚 · 决策者为家长</div></div></div>
+      <div class="bar-row"><div class="lbl"><span>亲子体验需求</span><span>88%</span></div><div class="track"><div class="fill" data-w="88" style="background:var(--ts)"></div></div></div>
+      <div class="bar-row"><div class="lbl"><span>人均预算 300—500 元</span><span>61%</span></div><div class="track"><div class="fill" data-w="61" style="background:var(--ts2)"></div></div></div>
+      <div class="bar-row"><div class="lbl"><span>重游意愿</span><span>47%</span></div><div class="track"><div class="fill" data-w="47" style="background:#444c56"></div></div></div>
+    </div>
+  </div>
+  <div class="grid3" style="margin-top:26px">
+    <div class="card"><div class="persona p3"><div class="avatar">🏺</div><div><h3>破局产品 ① 陶琉手作体验</h3><div class="note">对标淄博陶瓷琉璃文化 · 客单价 80—200 元</div></div></div>
+      <p class="tip">把"看烧烤"变成"做琉璃"：非遗工坊 + 烧制邮寄服务，将 2 小时停留延长为半日深度体验，直接拉高人均二消。</p></div>
+    <div class="card"><div class="persona p3"><div class="avatar">🎭</div><div><h3>破局产品 ② 沉浸式演艺</h3><div class="note">天水可挖掘伏羲文化 · 客单价 120—280 元</div></div></div>
+      <p class="tip">夜间沉浸剧 + 麻辣烫主题街区联动，解决"白天吃一碗就走"的痛点，创造过夜与夜间消费场景。</p></div>
+    <div class="card"><div class="persona p3"><div class="avatar">📦</div><div><h3>破局产品 ③ 文创伴手礼体系</h3><div class="note">把流量装进行李箱 · 目标贡献人均消费 +60 元</div></div></div>
+      <p class="tip">"烧烤三宝"礼盒、甘谷辣椒、伏羲文创 IP，以电商复购承接线下流量，实现 LTV（用户终身价值）延伸。</p></div>
+  </div>
+  <div class="grid2" style="margin-top:26px">
+    <div class="card"><h3>客群结构变化</h3><div class="note">大学生与家庭周边游占比增多 → 人均消费被摊薄（示意）</div><svg id="pd" class="chart"></svg></div>
+    <div class="card"><h3>人均消费漏斗</h3><div class="note">二消与文创渗透率低是人均消费低的直接原因（示意模型）</div><svg id="fn" class="chart"></svg></div>
+  </div>
+</section></div>
+
+<!-- 04 趋势预测 -->
+<div class="page" id="pg-forecast"><section id="s4">
+  <div class="sec-head">
+    <div class="sec-num">04 / FORECAST</div>
+    <h2>线性回归趋势预测（2026—2028）</h2>
+    <p class="sec-desc">对 2021—2025 年数据拟合一元线性回归模型（最小二乘法）。预测显示：天水游客人次增速斜率（+1004 万/年）高于淄博（+891 万/年），若保持现状，天水人次将于 2028 年前后追平淄博；但收入端两地斜率几乎一致（≈74 亿/年），<b style="color:var(--gold)">天水的增长仍是"人次驱动"而非"消费驱动"</b>，印证了提质升级与产品破局的紧迫性。</p>
+  </div>
+  <div class="grid2">
+    <div class="card"><h3>游客人次预测</h3><div class="note">实线为统计值 · 虚线为回归预测 · 单位：万人次</div><svg id="f1" class="chart"></svg></div>
+    <div class="card"><h3>旅游总收入预测</h3><div class="note">单位：亿元</div><svg id="f2" class="chart"></svg></div>
+  </div>
+
+  <div class="card" style="margin-top:26px">
+    <h3>🏔 地理地形与文旅资源禀赋示意</h3>
+    <div class="note">天水地处陇中黄土高原与西秦岭交汇，山地峡谷塑造"避暑+康养"潜力；淄博位于鲁中丘陵与鲁北平原过渡带，齐文化源远流长</div>
+    <div class="terrain-wrap" style="position:relative;border-radius:18px;overflow:hidden;border:1px solid var(--line);background:#0a0e14">
+      <svg viewBox="0 0 1200 380" style="display:block;width:100%;height:auto" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#0a0e14"/><stop offset="1" stop-color="#121a24"/></linearGradient>
+          <linearGradient id="m1" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#1f6f5f"/><stop offset="1" stop-color="#123a33"/></linearGradient>
+          <linearGradient id="m2" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2a8a72"/><stop offset="1" stop-color="#16453b"/></linearGradient>
+          <linearGradient id="m3" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#3aa888"/><stop offset="1" stop-color="#1d5548"/></linearGradient>
+        </defs>
+        <rect width="1200" height="380" fill="url(#sky)"/>
+        <g fill="#f0c46c" opacity=".7">
+          <circle cx="120" cy="60" r="1.6"/><circle cx="340" cy="40" r="1.2"/><circle cx="560" cy="70" r="1.8"/>
+          <circle cx="780" cy="45" r="1.3"/><circle cx="1010" cy="65" r="1.7"/><circle cx="1130" cy="35" r="1.2"/>
+        </g>
+        <circle cx="1020" cy="90" r="34" fill="#f0c46c" opacity=".9"><animate attributeName="cy" values="90;70;90" dur="8s" repeatCount="indefinite"/></circle>
+        <path fill="url(#m1)" opacity=".9">
+          <animate attributeName="d" dur="12s" repeatCount="indefinite"
+            values="M0,260 L120,150 L240,240 L360,120 L500,230 L640,140 L790,250 L930,130 L1080,240 L1200,170 L1200,380 L0,380 Z;
+                    M0,250 L120,160 L240,230 L360,130 L500,220 L640,150 L790,240 L930,140 L1080,230 L1200,180 L1200,380 L0,380 Z;
+                    M0,260 L120,150 L240,240 L360,120 L500,230 L640,140 L790,250 L930,130 L1080,240 L1200,170 L1200,380 L0,380 Z"/>
+        </path>
+        <path fill="url(#m2)" opacity=".95">
+          <animate attributeName="d" dur="9s" repeatCount="indefinite"
+            values="M0,300 L160,210 L330,290 L500,200 L670,285 L850,205 L1020,290 L1200,220 L1200,380 L0,380 Z;
+                    M0,290 L160,220 L330,280 L500,210 L670,275 L850,215 L1020,280 L1200,230 L1200,380 L0,380 Z;
+                    M0,300 L160,210 L330,290 L500,200 L670,285 L850,205 L1020,290 L1200,220 L1200,380 L0,380 Z"/>
+        </path>
+        <path fill="url(#m3)">
+          <animate attributeName="d" dur="7s" repeatCount="indefinite"
+            values="M0,340 L200,290 L400,345 L600,295 L820,350 L1000,300 L1200,345 L1200,380 L0,380 Z;
+                    M0,335 L200,298 L400,338 L600,302 L820,342 L1000,308 L1200,338 L1200,380 L0,380 Z;
+                    M0,340 L200,290 L400,345 L600,295 L820,350 L1000,300 L1200,345 L1200,380 L0,380 Z"/>
+        </path>
+        <g stroke="#3ec6a8" fill="none" stroke-width="1" opacity=".35" stroke-dasharray="5,6">
+          <path d="M-20,320 Q300,270 620,315 T1220,305"><animate attributeName="stroke-dashoffset" from="0" to="-44" dur="3s" repeatCount="indefinite"/></path>
+          <path d="M-20,290 Q320,240 640,285 T1220,275"><animate attributeName="stroke-dashoffset" from="0" to="-44" dur="4s" repeatCount="indefinite"/></path>
+          <path d="M-20,255 Q340,205 660,250 T1220,240"><animate attributeName="stroke-dashoffset" from="0" to="-44" dur="5s" repeatCount="indefinite"/></path>
+        </g>
+        <path d="M0,368 Q300,352 600,366 T1200,360" stroke="#2f6f8f" stroke-width="6" fill="none" opacity=".7" stroke-linecap="round">
+          <animate attributeName="stroke-dasharray" values="1,0;20,14" dur="6s" repeatCount="indefinite"/>
+        </path>
+        <g font-size="15" letter-spacing="2">
+          <text x="470" y="105" fill="#8de8d2">▲ 天水 · 西秦岭余脉（海拔 1000—3100m）· 避暑康养</text>
+          <text x="120" y="330" fill="#ffb27a">▲ 淄博 · 鲁中丘陵（海拔 300—800m）· 齐文化发祥地</text>
+        </g>
+        <g>
+          <circle cx="600" cy="200" r="5" fill="#3ec6a8"><animate attributeName="r" values="4;8;4" dur="2s" repeatCount="indefinite"/><animate attributeName="opacity" values="1;.3;1" dur="2s" repeatCount="indefinite"/></circle>
+          <circle cx="220" cy="300" r="5" fill="#ff7a45"><animate attributeName="r" values="4;8;4" dur="2.4s" repeatCount="indefinite"/><animate attributeName="opacity" values="1;.3;1" dur="2.4s" repeatCount="indefinite"/></circle>
+        </g>
+      </svg>
+      <div class="terr-legend">
+        <div><i style="background:#2a8a72"></i>山地（高海拔·天水侧）</div>
+        <div><i style="background:#3aa888"></i>丘陵（低缓·淄博侧）</div>
+        <div><i style="background:#2f6f8f"></i>河流/河谷廊道</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="grid3" style="margin-top:26px">
+    <div class="card"><h3>📈 预测方法</h3><div class="note">一元线性回归 · 最小二乘法</div>
+      <p class="tip">模型 ŷ = kx + b，基于 5 个年度样本拟合，外推 2026—2028。人次模型拟合优度高于收入模型（受 2023 异常峰值影响），预测结果仅供趋势参考。</p></div>
+    <div class="card"><h3>🎯 核心发现</h3><div class="note">斜率对比揭示增长质量差异</div>
+      <p class="tip">天水人次年增量（+1004 万）&gt; 淄博（+891 万）；但人均消费 673 元仅为淄博的 66%，差距虽在收窄仍然显著。人次红利正在兑现，消费升级窗口期约为 2—3 年。</p></div>
+    <div class="card"><h3>🧭 策略建议</h3><div class="note">从流量运营到产品运营</div>
+      <p class="tip">① 以陶琉/伏羲文化体验承接高客单客群；② 夜经济延长停留；③ 文创电商沉淀复购；④ 建立舆情情感监测预警"同质化"拐点。</p></div>
+  </div>
+</section></div>
+
+<footer>
+  <b>淄博市 2021—2025 年旅游业发展数据可视化分析</b><br>
+  数据来源：淄博市人民政府 / 天水市人民政府《国民经济和社会发展统计公报》(2021—2025)、淄博市文化和旅游局评估报告、抖音创作者平台指数<br>
+  舆情情感与区县热度部分为抽样示例数据，仅用于展示分析方法 · 本作品为竞赛演示用途
+</footer>
+
+<script>
+const NS='http://www.w3.org/2000/svg';
+const C={bg:'#0d1117',panel:'#161b22',line:'#21262d',grid:'#21262d',axis:'#30363d',txt:'#e6edf3',sub:'#8b949e',zb:'#ff7a45',zb2:'#ffb27a',ts:'#3ec6a8',ts2:'#8de8d2',gold:'#f0c46c',red:'#e5534b',blue:'#2f6f8f'};
+function S(t,a,p){const e=document.createElementNS(NS,t);for(const k in a)e.setAttribute(k,a[k]);if(p)p.appendChild(e);return e;}
+function T(s,a,p){const e=S('text',a,p);e.textContent=s;return e;}
+const tip=document.getElementById('tooltip');
+function bindTip(el,html){el.addEventListener('mousemove',ev=>{tip.innerHTML=html;tip.style.display='block';
+  tip.style.left=Math.min(ev.clientX+14,innerWidth-280)+'px';tip.style.top=(ev.clientY+14)+'px';});
+  el.addEventListener('mouseleave',()=>tip.style.display='none');}
+const W=800,H=460,ML=64,MR=24,MT=34,MB=44,PW=W-ML-MR,PH=H-MT-MB;
+function frame(svg){svg.setAttribute('viewBox',`0 0 ${W} ${H}`);
+  for(let i=0;i<=4;i++){const y=MT+PH*i/4;
+    S('line',{x1:ML,y1:y,x2:W-MR,y2:y,stroke:C.grid,'stroke-width':1},svg);}
+  return {x:c=>ML+PW*c,y:v=>MT+PH*v};}
+function xlabels(svg,cats,X){cats.forEach((c,i)=>{T(c,{x:X(i/(cats.length-1||1)),y:H-MB+26,'text-anchor':'middle',fill:C.sub,'font-size':13},svg);});}
+function ylabels(svg,ticks,Y,fmt){ticks.forEach(t=>{T(fmt(t),{x:ML-10,y:Y(t)+4,'text-anchor':'end',fill:C.sub,'font-size':12},svg);});}
+function legend(svg,items){let lx=ML;items.forEach(it=>{
+  S('rect',{x:lx,y:10,width:12,height:12,rx:3,fill:it.color},svg);
+  T(it.name,{x:lx+18,y:20,fill:C.sub,'font-size':12},svg);lx+=18+it.name.length*13+30;});}
+function bars(svg,cats,series,fmt){
+  const n=cats.length,g=n*(series.length)+(n-1)*0.0,bw=Math.min(34,PW/g*0.8);
+  let max=0;series.forEach(s=>s.data.forEach(v=>max=Math.max(max,v)));max*=1.15;
+  const X=frame(svg);
+  ylabels(svg,[0,.25,.5,.75,1],t=>X.y(t),t=>fmt(max*t));
+  cats.forEach((c,ci)=>{const gx=X.x((ci+.5)/n);T(c,{x:gx,y:H-MB+26,'text-anchor':'middle',fill:C.sub,'font-size':13},svg);
+    series.forEach((s,si)=>{const bw2=bw*0.9,dx=(si-(series.length-1)/2)*(bw2+4);
+      const h=PH*s.data[ci]/max,r=S('rect',{x:gx+dx-bw2/2,y:MT+PH-h,width:bw2,height:h,rx:4,fill:s.color,class:'grow'},svg);
+      r.style.transformBox='fill-box';r.style.transformOrigin='50% 100%';r.style.transform='scaleY(0)';
+      r.style.transition=`transform .9s cubic-bezier(.22,1,.36,1) ${ci*0.08+si*0.05}s`;
+      bindTip(r,`<b>${c}</b><br>${s.name}：${fmt(s.data[ci])}`);
+      S('text',{x:gx+dx,y:MT+PH-h-6,'text-anchor':'middle',fill:s.color,'font-size':11},svg).textContent=fmt(s.data[ci]);});});}
+function stacked(svg,cats,layers,fmt){
+  const n=cats.length,bw=Math.min(44,PW/n*0.55);let max=0;
+  cats.forEach((c,i)=>{let s=0;layers.forEach(l=>s+=l.data[i]);max=Math.max(max,s);});max*=1.12;
+  const X=frame(svg);ylabels(svg,[0,.25,.5,.75,1],t=>X.y(t),t=>fmt(max*t));
+  cats.forEach((c,ci)=>{const gx=X.x((ci+.5)/n);T(c,{x:gx,y:H-MB+26,'text-anchor':'middle',fill:C.sub,'font-size':13},svg);
+    let acc=0;
+    layers.forEach(l=>{const h=PH*l.data[ci]/max,y=MT+PH-acc-h;
+      const r=S('rect',{x:gx-bw/2,y:y,width:bw,height:h,fill:l.color,class:'grow'},svg);
+      r.style.transformBox='fill-box';r.style.transformOrigin='50% 100%';r.style.transform='scaleY(0)';
+      r.style.transition=`transform .9s cubic-bezier(.22,1,.36,1) ${ci*0.08}s`;
+      bindTip(r,`<b>${c} · ${l.name}</b><br>${fmt(l.data[ci])}处`);acc+=h;});
+    const tot=layers.reduce((a,l)=>a+l.data[ci],0);
+    T(fmt(tot),{x:gx,y:MT+PH-acc-8,'text-anchor':'middle',fill:C.txt,'font-size':12},svg);});}
+function line(svg,cats,series,fmt,opt={}){
+  let max=opt.max||0,min=opt.min||0;
+  if(!opt.max){series.forEach(s=>s.data.forEach((v,i)=>{if(v==null)return;max=Math.max(max,v);min=Math.min(min,v);}));max*=1.1;if(min<0)min*=1.1;}
+  const X=frame(svg);const Yv=v=>MT+PH*(1-(v-min)/(max-min));
+  ylabels(svg,[0,.25,.5,.75,1],t=>Yv(min+(max-min)*t),t=>fmt(min+(max-min)*t));
+  series.forEach((s,si)=>{
+    const pts=s.data.map((v,i)=>v==null?null:[X.x(i/(cats.length-1)),Yv(v)]).filter(Boolean);
+    const d='M'+pts.map(p=>p[0].toFixed(1)+','+p[1].toFixed(1)).join(' L');
+    const p=S('path',{d:d,fill:'none',stroke:s.color,'stroke-width':3,'stroke-linejoin':'round','stroke-linecap':'round'},svg);
+    if(s.dash)p.setAttribute('stroke-dasharray','7,6');
+    const len=p.getTotalLength();p.style.strokeDasharray=s.dash?'7,6':len;p.style.strokeDashoffset=s.dash?0:len;
+    p.style.transition=s.dash?'none':`stroke-dashoffset 1.8s ease ${si*0.15}s`;
+    pts.forEach((pt,i)=>{const c=S('circle',{cx:pt[0],cy:pt[1],r:s.dash?4.5:5,fill:s.color,stroke:C.panel,'stroke-width':2,class:'grow'},svg);
+      c.style.transformBox='fill-box';c.style.transformOrigin='center';c.style.transform='scale(0)';
+      c.style.transition=`transform .5s ease ${si*0.15+0.6+i*0.1}s`;
+      bindTip(c,`<b>${cats[s.data.indexOf(s.data.filter(v=>v!=null)[i])]||''}</b><br>${s.name}：${fmt(s.data.filter(v=>v!=null)[i])}`);});
+    if(s.area){const a=S('path',{d:d+` L${pts[pts.length-1][0]},${MT+PH} L${pts[0][0]},${MT+PH} Z`,fill:s.color,opacity:.14},svg);a.style.opacity=0;a.style.transition='opacity 1.6s ease .8s';a.dataset.fade='1';}});
+  const ov=S('rect',{x:ML,y:MT,width:PW,height:PH,fill:'transparent'},svg);
+  ov.addEventListener('mousemove',ev=>{const rc=svg.getBoundingClientRect();
+    const px=(ev.clientX-rc.left)/rc.width*W;
+    let i=Math.round((px-ML)/PW*(cats.length-1));i=Math.max(0,Math.min(cats.length-1,i));
+    let html='<b>'+cats[i]+'</b>';
+    series.forEach(s=>{const v=s.data[i];if(v!=null)html+='<br><span style="color:'+s.color+'">&#9679;</span> '+s.name+'：'+fmt(v);});
+    tip.innerHTML=html;tip.style.display='block';
+    tip.style.left=Math.min(ev.clientX+14,innerWidth-280)+'px';tip.style.top=(ev.clientY+14)+'px';});
+  ov.addEventListener('mouseleave',()=>tip.style.display='none');
+  if(opt.hl){S('line',{x1:ML,y1:Yv(opt.hl.v),x2:W-MR,y2:Yv(opt.hl.v),stroke:C.gold,'stroke-dasharray':'5,5'},svg);
+    T(opt.hl.label,{x:ML+8,y:Yv(opt.hl.v)-8,fill:C.gold,'font-size':12},svg);}
+  cats.forEach((c,i)=>T(c,{x:X.x(i/(cats.length-1)),y:H-MB+26,'text-anchor':'middle',fill:C.sub,'font-size':12},svg));}
+function donut(svg,items,centerLabel){
+  svg.setAttribute('viewBox','0 0 800 430');
+  const cx=400,cy=188,R=105,CIRC=2*Math.PI*R;let acc=0;
+  items.forEach((it,i)=>{const frac=it.value/100;
+    const c=S('circle',{cx:cx,cy:cy,r:R,fill:'none',stroke:it.color,'stroke-width':40,
+      'stroke-dasharray':`0 ${CIRC}`,transform:`rotate(${-90+acc*360} ${cx} ${cy})`},svg);
+    c.style.transition=`stroke-dasharray 1.3s cubic-bezier(.22,1,.36,1) ${i*0.25}s`;
+    c.dataset.dash=`${frac*CIRC-2} ${CIRC-frac*CIRC+2}`;acc+=frac;
+    const mid=acc-frac/2,rad=(mid*360-90)*Math.PI/180;
+    if(frac>0.09)T(`${it.value}%`,{x:cx+Math.cos(rad)*R,y:cy+Math.sin(rad)*R+6,'text-anchor':'middle',
+      fill:'#0d1117','font-size':18,'font-weight':'bold','pointer-events':'none'},svg);});
+  T(centerLabel,{x:cx,y:cy-2,'text-anchor':'middle',fill:C.sub,'font-size':15},svg);
+  const total=items.length,lw=Math.min(220,720/total),y0=398;
+  items.forEach((it,i)=>{const lx=cx-total*lw/2+i*lw;
+    S('rect',{x:lx,y:y0-13,width:13,height:13,rx:3,fill:it.color},svg);
+    T(`${it.name} ${it.value}%`,{x:lx+20,y:y0-2,fill:C.txt,'font-size':14},svg);});}
+function groupHBars(svg,cats,series,fmt){ // 客流来源横向条形
+  svg.setAttribute('viewBox','0 0 800 360');
+  const max=Math.max(...series.map(s=>Math.max(...s.data)))*1.15;
+  const rh=Math.min(30,PH/cats.length*0.6);
+  cats.forEach((c,ci)=>{const y=MT+PH*(ci+.5)/cats.length;
+    T(c,{x:ML-12,y:y+4,'text-anchor':'end',fill:C.sub,'font-size':14},svg);
+    series.forEach((s,si)=>{const w=PW*s.data[ci]/max;
+      const r=S('rect',{x:ML,y:y-rh/2,width:w,height:rh,rx:5,fill:s.color,class:'grow'},svg);
+      r.style.transformBox='fill-box';r.style.transformOrigin='0% 50%';r.style.transform='scaleX(0)';
+      r.style.transition=`transform 1s cubic-bezier(.22,1,.36,1) ${ci*0.09}s`;
+      bindTip(r,`<b>${c}</b><br>占比：${fmt(s.data[ci])}`);});});}
+function funnel(svg,stages){
+  svg.setAttribute('viewBox','0 0 800 460');
+  const cx=400,topW=520,sh=58,gap=8,max=100;
+  stages.forEach((st,i)=>{const w1=topW*st.value/max,w2=topW*(stages[i+1]?stages[i+1].value/max:st.value/max*0.45);
+    const y=40+i*(sh+gap);
+    const p=S('polygon',{points:`${cx-w1/2},${y} ${cx+w1/2},${y} ${cx+w2/2},${y+sh} ${cx-w2/2},${y+sh}`,fill:st.color,opacity:.92,rx:8,class:'grow'},svg);
+    p.style.transformBox='fill-box';p.style.transformOrigin='50% 50%';p.style.transform='scale(0)';
+    p.style.transition=`transform .8s cubic-bezier(.34,1.56,.64,1) ${i*0.15}s`;
+    T(`${st.name}  ${st.value}%`,{x:cx,y:y+sh/2+5,'text-anchor':'middle',fill:'#fff','font-size':15,'font-weight':'bold'},svg);
+    bindTip(p,`<b>${st.name}</b><br>转化：${st.value}%`);});}
+function heatColor(t){const stops=[[18,58,51],[42,138,114],[240,196,108],[255,122,69]];
+  t=Math.max(0,Math.min(1,t));const seg=t*(stops.length-1),i=Math.min(stops.length-2,Math.floor(seg)),f=seg-i;
+  const c=stops[i].map((v,k)=>Math.round(v+(stops[i+1][k]-v)*f));
+  return `rgb(${c[0]},${c[1]},${c[2]})`;}
+
+
+/* ===== PPT 五图：背离折线 / 双轴组合 / 指数斜率 / 柱线组合 / 雷达 ===== */
+function hoverOv(svg,n,cats,rows){
+  const ov=S('rect',{x:ML,y:MT,width:PW,height:PH,fill:'transparent'},svg);
+  ov.addEventListener('mousemove',ev=>{const rc=svg.getBoundingClientRect();
+    const px=(ev.clientX-rc.left)/rc.width*W;
+    let i=Math.round((px-ML)/PW*(n-1));i=Math.max(0,Math.min(n-1,i));
+    let html='<b>'+cats[i]+'</b>';
+    rows.forEach(r=>{const v=r.data[i];if(v!=null)html+='<br><span style="color:'+r.color+'">&#9679;</span> '+r.name+'：'+r.fmt(v);});
+    tip.innerHTML=html;tip.style.display='block';
+    tip.style.left=Math.min(ev.clientX+14,innerWidth-280)+'px';tip.style.top=(ev.clientY+14)+'px';});
+  ov.addEventListener('mouseleave',()=>tip.style.display='none');}
+function dualLine(svg,cats,L,R){
+  svg.setAttribute('viewBox',`0 0 ${W} ${H}`);
+  const n=cats.length,maxL=Math.max(...L.data)*1.15,maxR=Math.max(...R.data)*1.15;
+  const Xc=i=>ML+PW*i/(n-1),Yl=v=>MT+PH*(1-v/maxL),Yr=v=>MT+PH*(1-v/maxR);
+  for(let i=0;i<=4;i++){const y=MT+PH*i/4;S('line',{x1:ML,y1:y,x2:W-MR,y2:y,stroke:C.grid},svg);
+    T((maxL*(1-i/4)).toFixed(0),{x:ML-10,y:y+4,'text-anchor':'end',fill:C.sub,'font-size':12},svg);
+    T((maxR*(1-i/4)).toFixed(0),{x:W-MR+10,y:y+4,fill:C.sub,'font-size':12},svg);}
+  [[L,Yl],[R,Yr]].forEach(([s,Yf],si)=>{
+    const p=S('path',{d:'M'+s.data.map((v,i)=>Xc(i).toFixed(1)+','+Yf(v).toFixed(1)).join(' L'),fill:'none',stroke:s.color,'stroke-width':3,'stroke-linecap':'round'},svg);
+    const len=p.getTotalLength();p.style.strokeDasharray=len;p.style.strokeDashoffset=len;
+    p.style.transition=`stroke-dashoffset 1.8s ease ${si*0.25}s`;
+    s.data.forEach((v,i)=>{const c=S('circle',{cx:Xc(i),cy:Yf(v),r:5,fill:s.color,stroke:C.panel,'stroke-width':2,class:'grow'},svg);
+      c.style.transformBox='fill-box';c.style.transformOrigin='center';c.style.transform='scale(0)';
+      c.style.transition=`transform .5s ease ${si*0.25+0.7+i*0.12}s`;});
+    T(s.data[n-1].toFixed(0),{x:Xc(n-1)-6,y:Yf(s.data[n-1])-12,'text-anchor':'end',fill:s.color,'font-size':13,'font-weight':'bold'},svg);});
+  const pi=R.data.indexOf(Math.max(...R.data));
+  T('峰值 '+R.data[pi],{x:Xc(pi),y:Yr(R.data[pi])-14,'text-anchor':'middle',fill:C.zb2,'font-size':13,'font-weight':'bold'},svg);
+  legend(svg,[{name:L.name,color:L.color},{name:R.name,color:R.color}]);
+  cats.forEach((c,i)=>T(c,{x:Xc(i),y:H-MB+26,'text-anchor':'middle',fill:C.sub,'font-size':13},svg));
+  hoverOv(svg,n,cats,[{name:L.name,color:L.color,data:L.data,fmt:v=>v.toFixed(0)},{name:R.name,color:R.color,data:R.data,fmt:v=>v.toFixed(0)}]);}
+function combo(svg,cats,bar,lines,rMin,rMax){
+  svg.setAttribute('viewBox',`0 0 ${W} ${H}`);
+  const n=cats.length,maxB=Math.max(...bar.data)*1.15;
+  const Xc=i=>ML+PW*i/(n-1),Yb=v=>MT+PH*(1-v/maxB),Yr=v=>MT+PH*(1-(v-rMin)/(rMax-rMin));
+  for(let i=0;i<=4;i++){const y=MT+PH*i/4;S('line',{x1:ML,y1:y,x2:W-MR,y2:y,stroke:C.grid},svg);
+    T((maxB*(1-i/4)).toFixed(0),{x:ML-10,y:y+4,'text-anchor':'end',fill:C.sub,'font-size':12},svg);
+    T(Math.round(rMin+(rMax-rMin)*(1-i/4)),{x:W-MR+10,y:y+4,fill:C.sub,'font-size':12},svg);}
+  const bw=Math.min(52,PW/n*0.5);
+  bar.data.forEach((v,i)=>{const gx=Xc(i),h=PH*v/maxB;
+    const r=S('rect',{x:gx-bw/2,y:MT+PH-h,width:bw,height:h,rx:5,fill:bar.color,class:'grow'},svg);
+    r.style.transformBox='fill-box';r.style.transformOrigin='50% 100%';r.style.transform='scaleY(0)';
+    r.style.transition=`transform .9s cubic-bezier(.22,1,.36,1) ${i*0.08}s`;});
+  lines.forEach((s,si)=>{
+    const segs=[];let cur=[];
+    s.data.forEach((v,i)=>{if(v==null){if(cur.length)segs.push(cur);cur=[];}else cur.push([Xc(i),Yr(v)]);});
+    if(cur.length)segs.push(cur);
+    segs.forEach(seg=>{const p=S('path',{d:'M'+seg.map(p=>p[0].toFixed(1)+','+p[1].toFixed(1)).join(' L'),fill:'none',stroke:s.color,'stroke-width':3,'stroke-linecap':'round'},svg);
+      const len=p.getTotalLength();p.style.strokeDasharray=len;p.style.strokeDashoffset=len;
+      p.style.transition=`stroke-dashoffset 1.6s ease ${si*0.2}s`;});
+    s.data.forEach((v,i)=>{if(v==null)return;const c=S('circle',{cx:Xc(i),cy:Yr(v),r:5,fill:s.color,stroke:C.panel,'stroke-width':2,class:'grow'},svg);
+      c.style.transformBox='fill-box';c.style.transformOrigin='center';c.style.transform='scale(0)';
+      c.style.transition=`transform .5s ease ${si*0.2+0.7+i*0.12}s`;});
+    const lastV=[...s.data].reverse().find(v=>v!=null);
+    T(lastV.toFixed(0),{x:W-MR-4,y:Yr(lastV)-10,'text-anchor':'end',fill:s.color,'font-size':13,'font-weight':'bold'},svg);});
+  legend(svg,[{name:bar.name,color:bar.color}].concat(lines.map(s=>({name:s.name,color:s.color}))));
+  cats.forEach((c,i)=>T(c,{x:Xc(i),y:H-MB+26,'text-anchor':'middle',fill:C.sub,'font-size':13},svg));
+  hoverOv(svg,n,cats,[{name:bar.name,color:bar.color,data:bar.data,fmt:v=>v.toFixed(1)}]
+    .concat(lines.map(s=>({name:s.name,color:s.color,data:s.data,fmt:v=>v.toFixed(1)}))));}
+function slopeIdx(svg){
+  svg.setAttribute('viewBox',`0 0 ${W} ${H}`);
+  const idx=a=>a.map(v=>v/a[0]*100),cats=years,n=cats.length,min=70,max=245;
+  const Xc=i=>ML+PW*i/(n-1),Yf=v=>MT+PH*(1-(v-min)/(max-min));
+  for(let i=0;i<=4;i++){const y=MT+PH*i/4;S('line',{x1:ML,y1:y,x2:W-MR,y2:y,stroke:C.grid},svg);
+    T((min+(max-min)*(1-i/4)).toFixed(0),{x:ML-10,y:y+4,'text-anchor':'end',fill:C.sub,'font-size':12},svg);}
+  T('指数（2021=100）',{x:ML-10,y:MT-12,'text-anchor':'end',fill:C.sub,'font-size':11},svg);
+  const series=[
+   {name:'淄博·游客人次',color:C.zb,data:idx(zbVis)},
+   {name:'淄博·人均消费',color:C.zb2,data:idx(zbPc)},
+   {name:'天水·游客人次',color:C.ts,data:idx(tsVis)},
+   {name:'天水·人均消费',color:C.ts2,data:idx(tsPc)}];
+  series.forEach((s,si)=>{
+    const p=S('path',{d:'M'+s.data.map((v,i)=>Xc(i).toFixed(1)+','+Yf(v).toFixed(1)).join(' L'),fill:'none',stroke:s.color,'stroke-width':2.5,'stroke-linecap':'round'},svg);
+    if(si%2)p.setAttribute('stroke-dasharray','7,6');
+    else{const len=p.getTotalLength();p.style.strokeDasharray=len;p.style.strokeDashoffset=len;
+      p.style.transition=`stroke-dashoffset 1.8s ease ${si*0.15}s`;}
+    T(s.data[0].toFixed(1),{x:Xc(0)-10,y:Yf(s.data[0])+4,'text-anchor':'end',fill:s.color,'font-size':12,'font-weight':'bold'},svg);
+    T(s.data[n-1].toFixed(1),{x:Xc(n-1)+10,y:Yf(s.data[n-1])+4,fill:s.color,'font-size':12,'font-weight':'bold'},svg);});
+  legend(svg,series.map(s=>({name:s.name,color:s.color})));
+  cats.forEach((c,i)=>T(c,{x:Xc(i),y:H-MB+26,'text-anchor':'middle',fill:C.sub,'font-size':13},svg));
+  hoverOv(svg,n,cats,series.map(s=>({name:s.name,color:s.color,data:s.data,fmt:v=>v.toFixed(1)})));}
+function radar(svg){
+  svg.setAttribute('viewBox','0 0 800 430');
+  const cx=400,cy=205,R=135;
+  const dims=[['客流承接','（爆火后人次增幅）'],['消费提质','（人均消费变化）'],['热度留存','（剩余热度占比）']];
+  const raw={zb:['+24.1%','-1.7%','8.8%'],ts:['+36.3%','+5.9%','27.9%']};
+  const norm={zb:[66.4,0,31.5],ts:[100,100,100]};
+  const ang=i=>(-90+i*120)*Math.PI/180;
+  [25,50,75,100].forEach(t=>{const pts=[0,1,2].map(i=>`${cx+Math.cos(ang(i))*R*t/100},${cy+Math.sin(ang(i))*R*t/100}`).join(' ');
+    S('polygon',{points:pts,fill:'none',stroke:C.grid},svg);
+    T(t,{x:cx+5,y:cy-R*t/100+4,fill:C.sub,'font-size':10},svg);});
+  [0,1,2].forEach(i=>{S('line',{x1:cx,y1:cy,x2:cx+Math.cos(ang(i))*R,y2:cy+Math.sin(ang(i))*R,stroke:C.grid},svg);
+    const lx=cx+Math.cos(ang(i))*(R+40),ly=cy+Math.sin(ang(i))*(R+34);
+    T(dims[i][0],{x:lx,y:ly,'text-anchor':'middle',fill:C.txt,'font-size':14,'font-weight':'bold'},svg);
+    T(dims[i][1],{x:lx,y:ly+17,'text-anchor':'middle',fill:C.sub,'font-size':11},svg);});
+  [['zb',C.zb,'淄博（烧烤·2023爆火）'],['ts',C.ts,'天水（麻辣烫·2024爆火）']].forEach(([key,color,label],ki)=>{
+    const pts=[0,1,2].map(i=>[cx+Math.cos(ang(i))*R*norm[key][i]/100,cy+Math.sin(ang(i))*R*norm[key][i]/100]);
+    const pg=S('polygon',{points:pts.map(p=>p.join(',')).join(' '),fill:color,opacity:.22,stroke:color,'stroke-width':2.5,class:'grow'},svg);
+    pg.style.transformBox='fill-box';pg.style.transformOrigin='50% 50%';pg.style.transform='scale(0)';
+    pg.style.transition=`transform .9s cubic-bezier(.34,1.4,.64,1) ${0.3+ki*0.25}s`;
+    pts.forEach((p,i)=>{const c=S('circle',{cx:p[0],cy:p[1],r:4.5,fill:color,stroke:C.panel,'stroke-width':2,class:'grow'},svg);
+      c.style.transformBox='fill-box';c.style.transformOrigin='center';c.style.transform='scale(0)';
+      c.style.transition=`transform .5s ease ${0.7+ki*0.25}s`;});
+    bindTip(pg,`<b>${label}</b><br>客流承接：${raw[key][0]}<br>消费提质：${raw[key][1]}<br>热度留存：${raw[key][2]}`);});
+  [['淄博（烧烤·2023爆火）',C.zb],['天水（麻辣烫·2024爆火）',C.ts]].forEach((l,i)=>{
+    S('rect',{x:210+i*250,y:398,width:13,height:13,rx:3,fill:l[1]},svg);
+    T(l[0],{x:230+i*250,y:409,fill:C.txt,'font-size':13},svg);});}
+
+/* ========== 数据 ========== */
+const years=['2021','2022','2023','2024','2025'];
+const zbVis=[4738.06,3648.60,6114.90,6863.63,7587.65],tsVis=[2892.62,3208.33,4799.55,5948.81,6543.28];
+const zbRev=[552.46,391.59,630.00,695.47,768.63],tsRev=[167.51,186.31,305.00,383.00,440.50];
+const zbPc=[1166,1073.3,1030.3,1013.3,1013],tsPc=[579.09,580.71,635.48,643.83,673.21];
+const zbHeat=[85,140,4127,580,362];
+const hl=['21H1','21H2','22H1','22H2','23H1','23H2','24H1','24H2','25H1','25H2'];
+const zbh=[1739,1229,2065,2218,819000,68000,115000,23000,30000,24000].map(Math.sqrt);
+const tsh=[null,null,null,null,null,null,212000,15000,6397,6285].map(v=>v==null?null:Math.sqrt(v));
+const fy=['2021','2022','2023','2024','2025','2026','2027','2028'];
+const fit=a=>{const xs=[2021,2022,2023,2024,2025];const n=5,sx=xs.reduce((a,b)=>a+b),sy=a.reduce((a,b)=>a+b),
+  sxy=xs.reduce((s,x,i)=>s+x*a[i],0),sxx=xs.reduce((s,x)=>s+x*x,0);
+  const k=(n*sxy-sx*sy)/(n*sxx-sx*sx),b=sy/n-k*sx/n;return xs.concat([2026,2027,2028]).map(x=>k*x+b);};
+const zbfV=fit(zbVis),tsfV=fit(tsVis),zbfR=fit(zbRev),tsfR=fit(tsRev);
+
+/* ========== 图表实例化 ========== */
+const defs=[
+ ['p1',s=>donut(s,[{name:'正面',value:58,color:C.ts},{name:'中性',value:26,color:C.gold},{name:'负面',value:16,color:C.red}],'微博情感')],
+ ['p2',s=>donut(s,[{name:'正面',value:71,color:C.ts},{name:'中性',value:19,color:C.gold},{name:'负面',value:10,color:C.red}],'小红书情感')],
+ ['pd',s=>donut(s,[{name:'大学生特种兵',value:42,color:C.zb},{name:'家庭周边游',value:33,color:C.ts},{name:'其他客群',value:25,color:'#444c56'}],'客群结构')],
+ ['fn',s=>funnel(s,[{name:'到访游客',value:100,color:'#2f6f8f'},{name:'产生餐饮消费',value:62,color:C.ts},{name:'产生住宿消费',value:38,color:C.gold},{name:'体验/演艺二消',value:21,color:C.zb},{name:'文创/电商复购',value:9,color:C.red}])],
+ ['f1',s=>{line(s,fy,[{name:'淄博·统计',color:C.zb,data:zbVis.concat([null,null,null]),area:1},{name:'淄博·预测',color:C.zb2,data:zbfV,dash:1},{name:'天水·统计',color:C.ts,data:tsVis.concat([null,null,null]),area:1},{name:'天水·预测',color:C.ts2,data:tsfV,dash:1}],v=>v.toFixed(0),{min:2500,max:10800});
+   S('rect',{x:ML+PW*4/7,y:MT,width:PW*3/7,height:PH,fill:C.gold,opacity:.05},s);
+   T('预测区间 →',{x:ML+PW*4.1/7,y:MT+18,fill:C.gold,'font-size':12},s);
+   legend(s,[{name:'淄博',color:C.zb},{name:'淄博·回归',color:C.zb2},{name:'天水',color:C.ts},{name:'天水·回归',color:C.ts2}]);}],
+ ['f2',s=>{line(s,fy,[{name:'淄博·统计',color:C.zb,data:zbRev.concat([null,null,null]),area:1},{name:'淄博·预测',color:C.zb2,data:zbfR,dash:1},{name:'天水·统计',color:C.ts,data:tsRev.concat([null,null,null]),area:1},{name:'天水·预测',color:C.ts2,data:tsfR,dash:1}],v=>v.toFixed(0),{min:120,max:1050});
+   S('rect',{x:ML+PW*4/7,y:MT,width:PW*3/7,height:PH,fill:C.gold,opacity:.05},s);
+   T('预测区间 →',{x:ML+PW*4.1/7,y:MT+18,fill:C.gold,'font-size':12},s);
+   legend(s,[{name:'淄博（亿元）',color:C.zb},{name:'天水（亿元）',color:C.ts}]);}],
+ ['n1',s=>{dualLine(s,years,{name:'游客人次（万人次）',color:C.ts,data:zbVis},{name:'"淄博烧烤"百度搜索指数',color:C.zb,data:zbHeat});}],
+ ['n2',s=>{combo(s,years,{name:'淄博旅游总收入（亿元）',color:C.zb,data:zbRev},[{name:'淄博人均消费（元）',color:C.zb2,data:zbPc},{name:'天水人均消费（元）',color:C.ts,data:tsPc}],520,1250);}],
+ ['n3',s=>{slopeIdx(s);}],
+ ['n4',s=>{combo(s,years,{name:'A级景区（处）',color:C.ts,data:[70,73,81,85,91]},[{name:'旅行社（家）',color:C.gold,data:[112,130,149,159,null]}],0,185);}],
+ ['n5',s=>{radar(s);}],
+ ['srcbar',s=>{groupHBars(s,['济南','青岛','潍坊','东营','滨州','临沂','省内其他','省外'],[{name:'占比',color:C.zb,data:[24,15,12,9,8,7,15,10]}],v=>v+'%');
+   T('2024—2025 淄博游客客源地构成（%）',{x:400,y:H-6,'text-anchor':'middle',fill:C.sub,'font-size':12},s);}]
+];
+defs.forEach(([id,fn])=>{const el=document.getElementById(id);if(el)fn(el);});
+
+/* ========== 淄博热力地图 ========== */
+(function(){
+ const svg=document.getElementById('zbmap');if(!svg)return;
+ const dists=[
+  {name:'高青县',heat:40,d:'M430,40 L640,60 L660,185 L470,195 Z',lbl:[545,125],info:'黄河湿地·温泉慢城<br>热度指数 40 · 潜力康养区'},
+  {name:'桓台县',heat:52,d:'M470,200 L655,190 L640,292 L492,302 Z',lbl:[563,248],info:'马踏湖湿地<br>热度指数 52'},
+  {name:'临淄区',heat:78,d:'M645,200 L835,215 L805,342 L652,302 Z',lbl:[735,272],info:'齐文化·足球起源地<br>热度指数 78 · 4A×2'},
+  {name:'周村区',heat:66,d:'M328,302 L432,296 L426,378 L340,382 Z',lbl:[381,344],info:'周村古商城（4A）<br>热度指数 66 · "旱码头"'},
+  {name:'张店区',heat:95,d:'M440,304 L512,300 L514,362 L442,364 Z',lbl:[477,338],info:'核心烧烤街区×7 · 枢纽<br>热度指数 95 · 承接约38%客流'},
+  {name:'淄川区',heat:72,d:'M432,384 L600,368 L612,502 L462,532 Z',lbl:[522,448],info:'聊斋城·潭溪山（4A）<br>热度指数 72'},
+  {name:'博山区',heat:68,d:'M378,472 L456,456 L472,532 L396,548 Z',lbl:[426,506],info:'陶琉小镇·红叶柿岩<br>热度指数 68'},
+  {name:'沂源县',heat:44,d:'M238,424 L374,398 L396,552 L302,652 L188,602 Z',lbl:[300,505],info:'沂源溶洞·苹果之乡<br>热度指数 44'}];
+ dists.forEach((d,i)=>{const p=S('path',{d:d.d,fill:heatColor(d.heat/100),class:'map-dist grow'},svg);
+   p.style.transformBox='fill-box';p.style.transformOrigin='50% 50%';p.style.transform='scale(0)';
+   p.style.transition=`transform .7s cubic-bezier(.34,1.56,.64,1) ${i*0.09}s`;
+   bindTip(p,`<b>${d.name}</b><br>${d.info}`);
+   const lb=T(d.name,{x:d.lbl[0],y:d.lbl[1],'text-anchor':'middle',fill:'#0d1117','font-size':17,'font-weight':'bold','pointer-events':'none'},svg);
+   lb.style.opacity=0;lb.style.transition=`opacity .6s ease ${i*0.09+0.5}s`;lb.setAttribute('class','lbl-fade');
+   T(d.heat,{x:d.lbl[0],y:d.lbl[1]+20,'text-anchor':'middle',fill:'rgba(13,17,23,.75)','font-size':13,'font-weight':'bold','pointer-events':'none',class:'lbl-fade'},svg).style.opacity=0;});
+ // 热点脉冲
+ [[477,332]].forEach(pt=>{S('circle',{cx:pt[0],cy:pt[1],r:6,fill:'#fff',class:'pulse'},svg);});
+ // 客流流向弧线
+ const hub=[477,330];
+ const srcs=[['济南',120,640,C.gold],['青岛',930,520,C.zb],['潍坊',920,640,C.ts],['东营',700,20,C.blue],['滨州',300,20,C.zb2]];
+ srcs.forEach((sc,i)=>{const mx=(sc[1]+hub[0])/2,my=(sc[2]+hub[1])/2-90;
+   const p=S('path',{d:`M${sc[1]},${sc[2]} Q${mx},${my} ${hub[0]},${hub[1]}`,class:'flow',stroke:sc[3]},svg);
+   p.style.animationDelay=(i*0.2)+'s';
+   T(sc[0],{x:sc[1],y:sc[2]+(sc[2]<100?-10:24),'text-anchor':'middle',fill:sc[3],'font-size':16,'font-weight':'bold'},svg);
+   S('circle',{cx:sc[1],cy:sc[2],r:4,fill:sc[3]},svg);});
+ // 图例
+ const lg=S('g',{},svg),lx=40,ly=676;
+ for(let i=0;i<=20;i++){S('rect',{x:lx+i*11,y:ly,width:11,height:12,fill:heatColor(i/20)},lg);}
+ T('低',{x:lx-8,y:ly+11,'text-anchor':'end',fill:C.sub,'font-size':12},lg);
+ T('高',{x:lx+20*11+8,y:ly+11,fill:C.sub,'font-size':12},lg);
+ T('文旅热度指数（示意）',{x:lx+118,y:ly-8,'text-anchor':'middle',fill:C.sub,'font-size':12},lg);
+})();
+
+/* ========== 播放控制 ========== */
+const io=new IntersectionObserver(es=>es.forEach(e=>{
+ if(!e.isIntersecting)return;const card=e.target;card.classList.add('show');
+ card.querySelectorAll('.grow').forEach(g=>g.style.transform='scale(1)');
+ card.querySelectorAll('path[fill="none"]').forEach(p=>{if(p.style.strokeDasharray&&p.style.strokeDasharray!=='7,6')p.style.strokeDashoffset=0;});
+ card.querySelectorAll('path[dataset],circle[dataset]').forEach(()=>{});
+ card.querySelectorAll('[data-dash]').forEach(c=>c.setAttribute('stroke-dasharray',c.dataset.dash));
+ card.querySelectorAll('[data-fade]').forEach(a=>a.style.opacity=.14);
+ card.querySelectorAll('.fill').forEach(f=>f.style.width=f.dataset.w+'%');
+ card.querySelectorAll('.lbl-fade').forEach(l=>l.style.opacity=1);
+}),{threshold:.2});
+document.querySelectorAll('.card').forEach(c=>io.observe(c));
+
+/* KPI 数字滚动：每次回到首页重新播放 */
+function playKPIs(){
+ document.querySelectorAll('[data-count]').forEach(el=>{
+  const target=parseFloat(el.dataset.count),dec=parseInt(el.dataset.decimal||0),suf=el.dataset.suffix||'';
+  const t0=performance.now();
+  (function tick(t){const p=Math.min(1,(t-t0)/1600),e=1-Math.pow(1-p,3);
+   el.textContent=(target*e).toFixed(dec)+suf;if(p<1)requestAnimationFrame(tick);})(t0);});}
+
+/* ========== 多页面路由 ========== */
+const PAGES=[['home','首页'],['map','热力地图'],['compare','双城对比'],['sentiment','舆情情感'],['persona','客群画像'],['forecast','趋势预测']];
+const dots=document.createElement('div');dots.className='pdots';
+PAGES.forEach(([id,name])=>{const a=document.createElement('a');a.href='#/'+id;a.dataset.pg=id;
+  a.innerHTML='<span>'+name+'</span>';dots.appendChild(a);});
+document.body.appendChild(dots);
+const pager=document.createElement('div');pager.className='pager';
+pager.innerHTML='<button id="pgPrev">‹ 上一页</button><button id="pgNext">下一页 ›</button>';
+document.body.appendChild(pager);
+let curIdx=0;
+function resetCard(card){
+  card.classList.remove('show');
+  card.querySelectorAll('.grow').forEach(g=>g.style.transform='scale(0)');
+  card.querySelectorAll('path[fill="none"]').forEach(pp=>{
+    if(pp.style.strokeDasharray&&pp.style.strokeDasharray!=='7,6')pp.style.strokeDashoffset=pp.getTotalLength();});
+  card.querySelectorAll('[data-dash]').forEach(c=>c.setAttribute('stroke-dasharray','0 9999'));
+  card.querySelectorAll('[data-fade]').forEach(a=>a.style.opacity=0);
+  card.querySelectorAll('.fill').forEach(f=>f.style.width=0);
+  card.querySelectorAll('.lbl-fade').forEach(l=>l.style.opacity=0);
+}
+function route(){
+  let h=(location.hash||'#/home').replace('#/','').split('?')[0];
+  if(!PAGES.some(p=>p[0]===h))h='home';
+  curIdx=PAGES.findIndex(p=>p[0]===h);
+  /* 每次切换前重置所有页面图表，回到页面时重新播放动画 */
+  document.querySelectorAll('.page .card').forEach(resetCard);
+  document.querySelectorAll('.page').forEach(pg=>pg.classList.remove('active'));
+  document.getElementById('pg-'+h).classList.add('active');
+  document.querySelectorAll('.nav-links a,.pdots a').forEach(a=>a.classList.toggle('on',a.dataset.pg===h));
+  window.scrollTo({top:0});
+}
+document.getElementById('pgPrev').onclick=()=>{location.hash='#/'+PAGES[(curIdx-1+PAGES.length)%PAGES.length][0];};
+document.getElementById('pgNext').onclick=()=>{location.hash='#/'+PAGES[(curIdx+1)%PAGES.length][0];};
+window.addEventListener('hashchange',route);
+route();
+if(((location.hash||'#/home').replace('#/','')||'home')==='home')setTimeout(playKPIs,250);
+
+</script>
+</body>
+</html>
